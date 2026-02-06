@@ -11,6 +11,8 @@ let data={
   country:'',
   level:''
 }
+const sectionBlog = document.getElementById('blog_section')
+
 const select = ()=>{
   const developmentEngineering = document.getElementById('Development-Engineering');
   const salesBusinessDev = document.getElementById('Sales-Business-Dev');
@@ -2758,6 +2760,7 @@ selectCountry.addEventListener('change', (e)=>{
     ...data,
     country: e.target.value
   }
+  sectionBlog.style.display = 'block'
   console.log(data)
   select()
 })
