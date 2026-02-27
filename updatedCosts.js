@@ -1,6 +1,7 @@
 /**
  * Calculadora Teilur B2B - Refactorizado
- * Valores 2026 Master Hierarchy (Brazil).
+ * Valores: 2026 Master Hierarchy por país (Brazil, Colombia, Mexico, Argentina).
+ * La estimación de costos usa el país seleccionado en el select (group-country).
  * En Webflow: cargar primero price-table-2026.js, luego este archivo.
  */
 var Webflow = Webflow || [];
@@ -29,6 +30,10 @@ const GROUP_CONTAINER_IDS = {
   'Marketing & Branding': 'Marketing-Branding',
   'Data & Analytics': 'Data-Analytics'
 };
+
+// Valores del select País que coinciden con la clave en PRICE_TABLE (Brazil, Colombia, Mexico, Argentina).
+// Si en Webflow el option value es distinto (ej. "México"), añade aquí: 'México': 'Mexico'
+const COUNTRY_KEY_NORMALIZE = {};
 
 // --- Rol actual según el grupo (campo en data) ---
 function getCurrentRole() {
@@ -73,11 +78,15 @@ function getDOMElements() {
 }
 
 /**
- * Muestra/oculta contenedores de roles y pasos (país, nivel, enviar).
+ * Flujo Webflow: cada vez que el usuario elige un valor en un select, se muestra el siguiente.
+ * 1. Elige Grupo        → se muestra el contenedor de roles (ej. Development-Engineering).
+ * 2. Elige Rol          → se muestra el select de País (group-country).
+ * 3. Elige País         → se muestra el select de Nivel (select-level).
+ * 4. Elige Nivel        → se muestra el botón Submit (submit).
+ * 5. Clic en Submit     → setPrice() rellena la tabla de estimación de costos.
  */
 function updateUI() {
   const el = getDOMElements();
-  const containerIds = Object.values(GROUP_CONTAINER_IDS);
   const containerElements = Object.values(el.containers).filter(Boolean);
 
   // Ocultar todos los contenedores de roles
@@ -85,18 +94,18 @@ function updateUI() {
     if (node) node.style.display = 'none';
   });
 
-  // Mostrar solo el contenedor del grupo seleccionado
+  // Paso 1: mostrar solo el contenedor del grupo seleccionado (roles)
   const activeId = GROUP_CONTAINER_IDS[data.group];
   if (activeId) {
     const active = document.getElementById(activeId);
     if (active) active.style.display = 'flex';
   }
 
-  // Flujo: grupo → país → nivel → enviar
+  // Pasos 2–4: mostrar siguiente bloque solo cuando el anterior tiene valor
   const hasRole = getCurrentRole() !== '';
-  const showCountry = data.group !== '' && hasRole;
-  const showLevel = showCountry && data.country !== '';
-  const showSubmit = showLevel && data.level !== '';
+  const showCountry = data.group !== '' && hasRole;           // paso 2: mostrar país
+  const showLevel = showCountry && data.country !== '';       // paso 3: mostrar nivel
+  const showSubmit = showLevel && data.level !== '';          // paso 4: mostrar botón submit
 
   if (el.chooseCountry) el.chooseCountry.style.display = data.group === '' || !hasRole ? 'none' : 'flex';
   if (el.chooseTheExperience) el.chooseTheExperience.style.display = !showCountry || !data.country ? 'none' : 'flex';
@@ -104,14 +113,15 @@ function updateUI() {
 }
 
 /**
- * Rellena la tabla de precios desde PRICE_TABLE (2026).
+ * Rellena la tabla de precios desde PRICE_TABLE (2026) según grupo, rol, nivel y país seleccionado.
  */
 function setPrice() {
   const el = getDOMElements();
   const role = getCurrentRole();
-  if (!data.group || !role || !data.level || !el.table.price) return;
+  if (!data.group || !role || !data.level || !data.country || !el.table.price) return;
 
-  const key = data.group + '|' + role + '|' + data.level;
+  const country = COUNTRY_KEY_NORMALIZE[data.country] || data.country;
+  const key = data.group + '|' + role + '|' + data.level + '|' + country;
   const row = typeof PRICE_TABLE !== 'undefined' && PRICE_TABLE[key];
 
   if (!row) return;
