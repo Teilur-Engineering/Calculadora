@@ -1,0 +1,23 @@
+{
+  "name": "calculadora",
+  "version": "1.0.0",
+  "main": "updatedCosts.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Teilur-Engineering/Calculadora.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Teilur-Engineering/Calculadora/issues"
+  },
+  "homepage": "https://github.com/Teilur-Engineering/Calculadora#readme",
+  "description": "",
+  "dependencies": {
+    "xlsx": "^0.18.5"
+  }
+}
