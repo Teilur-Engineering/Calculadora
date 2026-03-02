@@ -64,6 +64,10 @@ function getDOMElements() {
     chooseCountry: document.getElementById('group-country'),
     chooseTheExperience: document.getElementById('select-level'),
     estimateCost: document.getElementById('submit'),
+    or: document.getElementById('or'),
+    secondSection: document.getElementById('second-section'),
+    secondCountry: document.getElementById('second-country'),
+    compareSubmit: document.getElementById('compare-submit'),
     table: {
       candidatesSalary: document.getElementById('Candidates-salary'),
       teilursFee: document.getElementById('teilurs-fee'),
@@ -110,6 +114,12 @@ function updateUI() {
   if (el.chooseCountry) el.chooseCountry.style.display = data.group === '' || !hasRole ? 'none' : 'flex';
   if (el.chooseTheExperience) el.chooseTheExperience.style.display = !showCountry || !data.country ? 'none' : 'flex';
   if (el.estimateCost) el.estimateCost.style.display = showSubmit ? 'flex' : 'none';
+  if (el.or) el.or.style.display = showSubmit ? 'flex' : 'none';
+  if (el.secondSection) el.secondSection.style.display = showSubmit ? 'flex' : 'none';
+  if (el.secondCountry) el.secondCountry.style.display = showSubmit ? 'flex' : 'none';
+
+  var hasSecondCountry = el.secondCountry && el.secondCountry.value !== '' && el.secondCountry.value !== null;
+  if (el.compareSubmit) el.compareSubmit.style.display = showSubmit && hasSecondCountry ? 'flex' : 'none';
 }
 
 /**
@@ -195,6 +205,13 @@ function bindEvents() {
   if (selectLevel) {
     selectLevel.addEventListener('change', function (e) {
       data.level = e.target.value;
+      onSelect();
+    });
+  }
+
+  const selectSecondCountry = document.getElementById('second-country');
+  if (selectSecondCountry) {
+    selectSecondCountry.addEventListener('change', function () {
       onSelect();
     });
   }
