@@ -20,6 +20,9 @@ const data = {
   level: ''
 };
 
+// Modo comparación: true cuando el usuario ha pulsado compare-submit
+var compareActive = false;
+
 // --- Mapeo grupo → ID del contenedor de roles (Webflow) ---
 const GROUP_CONTAINER_IDS = {
   'Development & Engineering': 'Development-Engineering',
@@ -68,6 +71,10 @@ function getDOMElements() {
     secondSection: document.getElementById('second-section'),
     secondCountry: document.getElementById('second-country'),
     compareSubmit: document.getElementById('compare-submit'),
+    titleCalculator: document.getElementById('title-calculator'),
+    container2Calculator: document.getElementById('container-2-calculator'),
+    titleCountry1: document.getElementById('title-country-1'),
+    titleCountry2: document.getElementById('title-country-2'),
     table: {
       candidatesSalary: document.getElementById('Candidates-salary'),
       teilursFee: document.getElementById('teilurs-fee'),
@@ -76,7 +83,10 @@ function getDOMElements() {
       min: document.getElementById('min'),
       max: document.getElementById('max'),
       total: document.getElementById('total'),
-      bar: document.getElementById('bar')
+      bar: document.getElementById('bar'),
+      candidatesSalary2: document.getElementById('Candidates-salary-2'),
+      teilursFee2: document.getElementById('teilurs-fee-2'),
+      total2: document.getElementById('total-2')
     }
   };
 }
@@ -119,7 +129,26 @@ function updateUI() {
   if (el.secondCountry) el.secondCountry.style.display = showSubmit ? 'flex' : 'none';
 
   var hasSecondCountry = el.secondCountry && el.secondCountry.value !== '' && el.secondCountry.value !== null;
-  if (el.compareSubmit) el.compareSubmit.style.display = showSubmit && hasSecondCountry ? 'flex' : 'none';
+  if (el.compareSubmit) el.compareSubmit.style.display = showSubmit && hasSecondCountry ? 'block' : 'none';
+
+  // Título calculadora y columna de comparación (solo cuando se ha pulsado compare-submit)
+  if (el.titleCalculator) {
+    el.titleCalculator.textContent = compareActive ? 'price comparison' : 'Expected monthly cost';
+  }
+  if (el.container2Calculator) {
+    el.container2Calculator.style.display = compareActive ? 'block' : 'none';
+  }
+  if (compareActive) {
+    if (el.titleCountry1 && el.chooseCountry) {
+      var opt1 = el.chooseCountry.options[el.chooseCountry.selectedIndex];
+      el.titleCountry1.textContent = opt1 ? opt1.text : data.country || '';
+      el.titleCountry1.style.display = 'block';
+    }
+    if (el.titleCountry2 && el.secondCountry) {
+      var opt2 = el.secondCountry.options[el.secondCountry.selectedIndex];
+      el.titleCountry2.textContent = opt2 ? opt2.text : (el.secondCountry.value || '');
+    }
+  }
 }
 
 /**
@@ -148,6 +177,28 @@ function setPrice() {
 }
 
 /**
+ * Rellena la columna del segundo país (comparación) desde PRICE_TABLE.
+ * Usa grupo, rol y nivel actuales; país = valor del select second-country.
+ */
+function setComparePrice() {
+  const el = getDOMElements();
+  const role = getCurrentRole();
+  const secondCountryVal = el.secondCountry && el.secondCountry.value;
+  if (!data.group || !role || !data.level || !secondCountryVal || !el.table.total2) return;
+
+  const country2 = COUNTRY_KEY_NORMALIZE[secondCountryVal] || secondCountryVal;
+  const key = data.group + '|' + role + '|' + data.level + '|' + country2;
+  const row = typeof PRICE_TABLE !== 'undefined' && PRICE_TABLE[key];
+
+  if (!row) return;
+
+  const t = el.table;
+  if (t.candidatesSalary2) t.candidatesSalary2.textContent = row.candidatesSalary;
+  if (t.teilursFee2) t.teilursFee2.textContent = row.teilursFee;
+  t.total2.textContent = row.total;
+}
+
+/**
  * Actualiza estado, UI y (opcional) precios.
  */
 function onSelect() {
@@ -163,10 +214,20 @@ function bindEvents() {
     });
   }
 
+  const compareSubmitBtn = document.getElementById('compare-submit');
+  if (compareSubmitBtn) {
+    compareSubmitBtn.addEventListener('click', function () {
+      compareActive = true;
+      updateUI();
+      setComparePrice();
+    });
+  }
+
   const selectGroup = document.getElementById('group-select');
   if (selectGroup) {
     selectGroup.addEventListener('change', function (e) {
       data.group = e.target.value;
+      compareActive = false;
       onSelect();
     });
   }
@@ -188,6 +249,7 @@ function bindEvents() {
     if (node && key) {
       node.addEventListener('change', function (e) {
         data[key] = e.target.value;
+        compareActive = false;
         onSelect();
       });
     }
@@ -197,6 +259,7 @@ function bindEvents() {
   if (selectCountry) {
     selectCountry.addEventListener('change', function (e) {
       data.country = e.target.value;
+      compareActive = false;
       onSelect();
     });
   }
@@ -205,6 +268,7 @@ function bindEvents() {
   if (selectLevel) {
     selectLevel.addEventListener('change', function (e) {
       data.level = e.target.value;
+      compareActive = false;
       onSelect();
     });
   }
@@ -212,6 +276,7 @@ function bindEvents() {
   const selectSecondCountry = document.getElementById('second-country');
   if (selectSecondCountry) {
     selectSecondCountry.addEventListener('change', function () {
+      compareActive = false;
       onSelect();
     });
   }
