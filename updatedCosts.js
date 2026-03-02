@@ -76,6 +76,7 @@ function getDOMElements() {
     container2Calculator: document.getElementById('container-2-calculator'),
     titleCountry1: document.getElementById('title-country-1'),
     titleCountry2: document.getElementById('title-country-2'),
+    or2: document.getElementById('or-2'),
     table: {
       candidatesSalary: document.getElementById('Candidates-salary'),
       teilursFee: document.getElementById('teilurs-fee'),
@@ -87,7 +88,8 @@ function getDOMElements() {
       bar: document.getElementById('bar'),
       candidatesSalary2: document.getElementById('Candidates-salary-2'),
       teilursFee2: document.getElementById('teilurs-fee-2'),
-      total2: document.getElementById('total-2')
+      total2: document.getElementById('total-2'),
+      price2: document.getElementById('price-2')
     }
   };
 }
@@ -134,10 +136,13 @@ function updateUI() {
 
   // Título calculadora y columna de comparación (solo cuando se ha pulsado compare-submit)
   if (el.titleCalculator) {
-    el.titleCalculator.textContent = compareActive ? 'price comparison' : 'Expected monthly cost';
+    el.titleCalculator.textContent = compareActive ? 'Price comparison' : 'Expected monthly cost';
   }
   if (el.container2Calculator) {
     el.container2Calculator.style.display = compareActive ? 'block' : 'none';
+  }
+  if (el.or2) {
+    el.or2.style.display = compareActive ? 'flex' : 'none';
   }
   if (compareActive) {
     if (el.titleCountry1) {
@@ -194,6 +199,7 @@ function setComparePrice() {
   if (t.candidatesSalary2) t.candidatesSalary2.textContent = row.candidatesSalary;
   if (t.teilursFee2) t.teilursFee2.textContent = row.teilursFee;
   if (t.total2) t.total2.textContent = row.total;
+  if (t.price2) t.price2.textContent = row.price;
 }
 
 /**
