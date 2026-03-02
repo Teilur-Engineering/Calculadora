@@ -102,7 +102,8 @@ function getDOMElements() {
 function updateUI() {
   const el = getDOMElements();
   const containerElements = Object.values(el.containers).filter(Boolean);
-
+    console.log(el.chooseCountry.options[el.chooseCountry.selectedIndex], el.titleCalculator);
+    
   // Ocultar todos los contenedores de roles
   containerElements.forEach(function (node) {
     if (node) node.style.display = 'none';
