@@ -102,7 +102,6 @@ function getDOMElements() {
 function updateUI() {
   const el = getDOMElements();
   const containerElements = Object.values(el.containers).filter(Boolean);
-    console.log(el.chooseCountry.options[el.chooseCountry.selectedIndex], el.titleCalculator);
     
   // Ocultar todos los contenedores de roles
   containerElements.forEach(function (node) {
@@ -140,6 +139,8 @@ function updateUI() {
     el.container2Calculator.style.display = compareActive ? 'block' : 'none';
   }
   if (compareActive) {
+    console.log(el.chooseCountry.options[el.chooseCountry.selectedIndex]);
+
     if (el.titleCountry1 && el.chooseCountry) {
       var opt1 = el.chooseCountry.options[el.chooseCountry.selectedIndex];
       el.titleCountry1.textContent = opt1 ? opt1.text : data.country || '';
