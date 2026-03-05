@@ -20,8 +20,8 @@ const data = {
   secondCountry: ''
 };
 
-// Tercer país siempre Estados Unidos (clave en PRICE_TABLE y texto en UI)
-const THIRD_COUNTRY_KEY = 'United States';
+// Tercer país siempre Estados Unidos (clave en PRICE_TABLE = mismo nombre que en el Excel)
+const THIRD_COUNTRY_KEY = 'Estados Unidos';
 const THIRD_COUNTRY_LABEL = 'Estados Unidos';
 
 // Comparación activa: true cuando el usuario ha pulsado compare-submit
