@@ -225,8 +225,8 @@ function setPriceCountry3() {
 
 /**
  * Rellena las 3 columnas de precios, total-saving, total-saving-2, price-4.
- * total-saving = (total país 1) - (total Estados Unidos)
- * total-saving-2 = (total país 2) - (total Estados Unidos)
+ * total-saving = (total Estados Unidos) - (total país 1) — ahorro vs US, siempre ≥ 0
+ * total-saving-2 = (total Estados Unidos) - (total país 2) — ahorro vs US, siempre ≥ 0
  * price-4 = total Estados Unidos (mismo que columna 3)
  */
 function fillAllThreePrices() {
@@ -255,8 +255,8 @@ function fillAllThreePrices() {
   const total2 = parsePrice(row2.total);
   const totalUS = parsePrice(rowUS.total);
 
-  if (t.totalSaving) t.totalSaving.textContent = formatPrice(total1 - totalUS);
-  if (t.totalSaving2) t.totalSaving2.textContent = formatPrice(total2 - totalUS);
+  if (t.totalSaving) t.totalSaving.textContent = formatPrice(totalUS - total1);
+  if (t.totalSaving2) t.totalSaving2.textContent = formatPrice(totalUS - total2);
   if (t.price4) t.price4.textContent = rowUS.total;
 }
 
