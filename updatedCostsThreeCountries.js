@@ -91,9 +91,24 @@ function getDOMElements() {
       candidatesSalary3: document.getElementById('Candidates-salary-3'),
       teilursFee3: document.getElementById('teilurs-fee-3'),
       total3: document.getElementById('total-3'),
-      price3: document.getElementById('price-3')
+      price3: document.getElementById('price-3'),
+      totalSaving: document.getElementById('total-saving'),
+      totalSaving2: document.getElementById('total-saving-2'),
+      price4: document.getElementById('price-4')
     }
   };
+}
+
+/** Convierte string de precio "5,000" a número. */
+function parsePrice(str) {
+  if (str == null || str === '') return 0;
+  return Number(String(str).replace(/,/g, '')) || 0;
+}
+
+/** Formatea número a string con comas (ej. 5000 -> "5,000"). */
+function formatPrice(num) {
+  if (num == null || isNaN(num)) return '0';
+  return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 /**
@@ -209,12 +224,40 @@ function setPriceCountry3() {
 }
 
 /**
- * Rellena las 3 columnas de precios y muestra el contenedor de resultados.
+ * Rellena las 3 columnas de precios, total-saving, total-saving-2, price-4.
+ * total-saving = (total país 1) - (total Estados Unidos)
+ * total-saving-2 = (total país 2) - (total Estados Unidos)
+ * price-4 = total Estados Unidos (mismo que columna 3)
  */
 function fillAllThreePrices() {
+  const el = getDOMElements();
+  const role = getCurrentRole();
+  const t = el.table;
+
   setPriceCountry1();
   setPriceCountry2();
   setPriceCountry3();
+
+  if (!data.group || !role || !data.level || typeof PRICE_TABLE === 'undefined') return;
+
+  const country1 = COUNTRY_KEY_NORMALIZE[data.country] || data.country;
+  const country2 = COUNTRY_KEY_NORMALIZE[data.secondCountry] || data.secondCountry;
+  const key1 = data.group + '|' + role + '|' + data.level + '|' + country1;
+  const key2 = data.group + '|' + role + '|' + data.level + '|' + country2;
+  const keyUS = data.group + '|' + role + '|' + data.level + '|' + THIRD_COUNTRY_KEY;
+
+  const row1 = PRICE_TABLE[key1];
+  const row2 = PRICE_TABLE[key2];
+  const rowUS = PRICE_TABLE[keyUS];
+  if (!row1 || !row2 || !rowUS) return;
+
+  const total1 = parsePrice(row1.total);
+  const total2 = parsePrice(row2.total);
+  const totalUS = parsePrice(rowUS.total);
+
+  if (t.totalSaving) t.totalSaving.textContent = formatPrice(total1 - totalUS);
+  if (t.totalSaving2) t.totalSaving2.textContent = formatPrice(total2 - totalUS);
+  if (t.price4) t.price4.textContent = rowUS.total;
 }
 
 function onSelect() {
