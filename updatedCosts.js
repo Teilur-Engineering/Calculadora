@@ -1,6 +1,6 @@
 /**
  * Calculadora Teilur B2B - Refactorizado
- * Valores: 2026 Master Hierarchy por país (Brazil, Colombia, Mexico, Argentina).
+ * Valores: 2026 Master Hierarchy por país (Brazil, Colombia, Mexico, Argentina, Estados Unidos).
  * La estimación de costos usa el país seleccionado en el select (group-country).
  * En Webflow: cargar primero price-table-2026.js, luego este archivo.
  */
@@ -35,7 +35,7 @@ const GROUP_CONTAINER_IDS = {
   'Data & Analytics': 'Data-Analytics'
 };
 
-// Valores del select País que coinciden con la clave en PRICE_TABLE (Brazil, Colombia, Mexico, Argentina).
+// Valores del select País que coinciden con la clave en PRICE_TABLE (Brazil, Colombia, Mexico, Argentina, Estados Unidos).
 // Si en Webflow el option value es distinto (ej. "México"), añade aquí: 'México': 'Mexico'
 const COUNTRY_KEY_NORMALIZE = {};
 

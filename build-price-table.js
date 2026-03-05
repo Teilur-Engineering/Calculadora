@@ -1,6 +1,6 @@
 /**
  * Genera la tabla de precios desde "2026 Master Hierarchy" por país.
- * Excel: Brazil cols 2-4, Colombia 5-7, Mexico 8-10, Argentina 11-13 (Lower, Median, Upper).
+ * Excel: Brazil 2-4, Colombia 5-7, Mexico 8-10, Argentina 11-13, Estados Unidos 14-16 (Lower, Median, Upper).
  * Clave: group|role|level|country (ej. "Development & Engineering|Software Engineer|Mid Level|Brazil").
  */
 const XLSX = require('xlsx');
@@ -22,7 +22,8 @@ const COUNTRY_COLUMNS = {
   'Brazil': [2, 3, 4],
   'Colombia': [5, 6, 7],
   'Mexico': [8, 9, 10],
-  'Argentina': [11, 12, 13]
+  'Argentina': [11, 12, 13],
+  'Estados Unidos': [14, 15, 16]
 };
 
 function formatNum(n) {
@@ -78,7 +79,7 @@ for (let i = 2; i < data.length; i++) {
   }
 }
 
-console.log('// PRICE_TABLE 2026 Master Hierarchy (Brazil, Colombia, Mexico, Argentina) - build-price-table.js');
+console.log('// PRICE_TABLE 2026 Master Hierarchy (Brazil, Colombia, Mexico, Argentina, Estados Unidos) - build-price-table.js');
 console.log('const PRICE_TABLE = ' + JSON.stringify(table, null, 0) + ';');
 console.log('const PRICE_KEYS = Object.keys(PRICE_TABLE).length;');
 console.log('// ' + Object.keys(table).length + ' entries');
