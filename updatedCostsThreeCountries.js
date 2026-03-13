@@ -21,7 +21,7 @@ const data = {
 };
 
 // Tercer país siempre Estados Unidos (clave en PRICE_TABLE)
-const THIRD_COUNTRY_KEY = 'United States';
+const THIRD_COUNTRY_KEY = 'Estados Unidos';
 const THIRD_COUNTRY_LABEL = 'United States';
 
 // All Latam usa precios de Mexico en PRICE_TABLE; en el título se muestra "All Latam" (por el texto del option)
@@ -44,9 +44,13 @@ const GROUP_CONTAINER_IDS = {
 
 /** Devuelve el texto visible del option seleccionado (ej. "All Latam" cuando el value es "Mexico"). */
 function getSelectSelectedText(selectEl) {
-  if (!selectEl || selectEl.selectedIndex < 0) return '';
-  const option = selectEl.options[selectEl.selectedIndex];
-  return option ? (option.textContent || option.text || option.value || '').trim() : '';
+  if (!selectEl || !selectEl.options) return '';
+  var idx = selectEl.selectedIndex;
+  if (idx < 0 || idx >= selectEl.options.length) return '';
+  var option = selectEl.options[idx];
+  if (!option) return '';
+  var text = (option.textContent || option.innerText || option.value || '').trim();
+  return text || '';
 }
 
 function getCurrentRole() {
