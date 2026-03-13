@@ -42,17 +42,6 @@ const GROUP_CONTAINER_IDS = {
 };
 
 
-/** Devuelve el texto visible del option seleccionado (ej. "All Latam" cuando el value es "Mexico"). */
-function getSelectSelectedText(selectEl) {
-  if (!selectEl || !selectEl.options) return '';
-  var idx = selectEl.selectedIndex;
-  if (idx < 0 || idx >= selectEl.options.length) return '';
-  var option = selectEl.options[idx];
-  if (!option) return '';
-  var text = (option.textContent || option.innerText || option.value || '').trim();
-  return text || '';
-}
-
 function getCurrentRole() {
   const roleByGroup = {
     'Development & Engineering': data.experience,
@@ -165,10 +154,10 @@ function updateUI() {
 
   if (compareActive) {
     if (el.titleCountry1) {
-      el.titleCountry1.textContent = getSelectSelectedText(el.chooseCountry) || data.country || '';
+      el.titleCountry1.textContent = data.country || '';
       el.titleCountry1.style.display = 'block';
     }
-    if (el.titleCountry2) el.titleCountry2.textContent = getSelectSelectedText(el.secondCountry) || data.secondCountry || '';
+    if (el.titleCountry2) el.titleCountry2.textContent = data.secondCountry || '';
     if (el.titleCountry3) el.titleCountry3.textContent = THIRD_COUNTRY_LABEL;
   }
 }
