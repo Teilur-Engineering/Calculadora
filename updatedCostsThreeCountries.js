@@ -20,9 +20,12 @@ const data = {
   secondCountry: ''
 };
 
-// Tercer país siempre Estados Unidos (clave en PRICE_TABLE = mismo nombre que en el Excel)
-const THIRD_COUNTRY_KEY = 'Estados Unidos';
-const THIRD_COUNTRY_LABEL = 'Estados Unidos';
+// Tercer país siempre Estados Unidos (clave en PRICE_TABLE)
+const THIRD_COUNTRY_KEY = 'United States';
+const THIRD_COUNTRY_LABEL = 'United States';
+
+// All Latam usa precios de Mexico en PRICE_TABLE; en el título se muestra "All Latam" (por el texto del option)
+const COUNTRY_KEY_NORMALIZE = { 'All Latam': 'Mexico' };
 
 // Comparación activa: true cuando el usuario ha pulsado compare-submit
 var compareActive = false;
@@ -38,7 +41,13 @@ const GROUP_CONTAINER_IDS = {
   'Data & Analytics': 'Data-Analytics'
 };
 
-const COUNTRY_KEY_NORMALIZE = {};
+
+/** Devuelve el texto visible del option seleccionado (ej. "All Latam" cuando el value es "Mexico"). */
+function getSelectSelectedText(selectEl) {
+  if (!selectEl || selectEl.selectedIndex < 0) return '';
+  const option = selectEl.options[selectEl.selectedIndex];
+  return option ? (option.textContent || option.text || option.value || '').trim() : '';
+}
 
 function getCurrentRole() {
   const roleByGroup = {
@@ -152,10 +161,10 @@ function updateUI() {
 
   if (compareActive) {
     if (el.titleCountry1) {
-      el.titleCountry1.textContent = data.country || '';
+      el.titleCountry1.textContent = getSelectSelectedText(el.chooseCountry) || data.country || '';
       el.titleCountry1.style.display = 'block';
     }
-    if (el.titleCountry2) el.titleCountry2.textContent = data.secondCountry || '';
+    if (el.titleCountry2) el.titleCountry2.textContent = getSelectSelectedText(el.secondCountry) || data.secondCountry || '';
     if (el.titleCountry3) el.titleCountry3.textContent = THIRD_COUNTRY_LABEL;
   }
 }
