@@ -313,13 +313,13 @@ function bindCalculatorPageToggle() {
   function showCompare(e) {
     if (e) e.preventDefault();
     if (c1) c1.style.display = 'none';
-    if (c2) c2.style.display = '';
+    if (c2) c2.style.display = 'block';
   }
 
   function showNormal(e) {
     if (e) e.preventDefault();
     if (c2) c2.style.display = 'none';
-    if (c1) c1.style.display = '';
+    if (c1) c1.style.display = 'block';
   }
 
   if (btnCompare) btnCompare.addEventListener('click', showCompare);
