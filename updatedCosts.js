@@ -24,6 +24,18 @@ const data = {
 // Modo comparación: true cuando el usuario ha pulsado compare-submit
 var compareActive = false;
 
+/** Raíz de la calculadora “normal” en la misma página que la de 3 países. Evita colisión de IDs duplicados. */
+const NORMAL_CALC_ROOT_ID = 'container-calculator-1';
+
+/**
+ * Elemento por ID solo dentro de la calculadora normal (o documento si no existe el contenedor — páginas antiguas).
+ */
+function elNormal(id) {
+  const root = document.getElementById(NORMAL_CALC_ROOT_ID);
+  if (root) return root.querySelector('#' + id);
+  return document.getElementById(id);
+}
+
 // --- Mapeo grupo → ID del contenedor de roles (Webflow) ---
 const GROUP_CONTAINER_IDS = {
   'Development & Engineering': 'Development-Engineering',
@@ -57,39 +69,39 @@ function getCurrentRole() {
 function getDOMElements() {
   return {
     containers: {
-      developmentEngineering: document.getElementById('Development-Engineering'),
-      salesBusinessDev: document.getElementById('Sales-Business-Dev'),
-      financeAccounting: document.getElementById('Finance-Accounting'),
-      productDevDesign: document.getElementById('Product-Dev-Design'),
-      hrInternalOps: document.getElementById('HR-Internal-Ops'),
-      marketingBranding: document.getElementById('Marketing-Branding'),
-      dataAnalytics: document.getElementById('Data-Analytics')
+      developmentEngineering: elNormal('Development-Engineering'),
+      salesBusinessDev: elNormal('Sales-Business-Dev'),
+      financeAccounting: elNormal('Finance-Accounting'),
+      productDevDesign: elNormal('Product-Dev-Design'),
+      hrInternalOps: elNormal('HR-Internal-Ops'),
+      marketingBranding: elNormal('Marketing-Branding'),
+      dataAnalytics: elNormal('Data-Analytics')
     },
-    chooseCountry: document.getElementById('group-country'),
-    chooseTheExperience: document.getElementById('select-level'),
-    estimateCost: document.getElementById('submit'),
-    or: document.getElementById('or'),
-    secondSection: document.getElementById('second-section'),
-    secondCountry: document.getElementById('second-country'),
-    compareSubmit: document.getElementById('compare-submit'),
-    titleCalculator: document.getElementById('title-calculator'),
-    container2Calculator: document.getElementById('container-2-calculator'),
-    titleCountry1: document.getElementById('title-country-1'),
-    titleCountry2: document.getElementById('title-country-2'),
-    or2: document.getElementById('or-2'),
+    chooseCountry: elNormal('group-country'),
+    chooseTheExperience: elNormal('select-level'),
+    estimateCost: elNormal('submit'),
+    or: elNormal('or'),
+    secondSection: elNormal('second-section'),
+    secondCountry: elNormal('second-country'),
+    compareSubmit: elNormal('compare-submit'),
+    titleCalculator: elNormal('title-calculator'),
+    container2Calculator: elNormal('container-2-calculator'),
+    titleCountry1: elNormal('title-country-1'),
+    titleCountry2: elNormal('title-country-2'),
+    or2: elNormal('or-2'),
     table: {
-      candidatesSalary: document.getElementById('Candidates-salary'),
-      teilursFee: document.getElementById('teilurs-fee'),
-      price: document.getElementById('price'),
-      median: document.getElementById('median'),
-      min: document.getElementById('min'),
-      max: document.getElementById('max'),
-      total: document.getElementById('total'),
-      bar: document.getElementById('bar'),
-      candidatesSalary2: document.getElementById('Candidates-salary-2'),
-      teilursFee2: document.getElementById('teilurs-fee-2'),
-      total2: document.getElementById('total-2'),
-      price2: document.getElementById('price-2')
+      candidatesSalary: elNormal('Candidates-salary'),
+      teilursFee: elNormal('teilurs-fee'),
+      price: elNormal('price'),
+      median: elNormal('median'),
+      min: elNormal('min'),
+      max: elNormal('max'),
+      total: elNormal('total'),
+      bar: elNormal('bar'),
+      candidatesSalary2: elNormal('Candidates-salary-2'),
+      teilursFee2: elNormal('teilurs-fee-2'),
+      total2: elNormal('total-2'),
+      price2: elNormal('price-2')
     }
   };
 }
@@ -114,7 +126,7 @@ function updateUI() {
   // Paso 1: mostrar solo el contenedor del grupo seleccionado (roles)
   const activeId = GROUP_CONTAINER_IDS[data.group];
   if (activeId) {
-    const active = document.getElementById(activeId);
+    const active = elNormal(activeId);
     if (active) active.style.display = 'flex';
   }
 
@@ -209,16 +221,16 @@ function onSelect() {
   updateUI();
 }
 
-// --- Event listeners (mantienen los mismos IDs que en Webflow) ---
+// --- Event listeners (IDs dentro de container-calculator-1 si existe) ---
 function bindEvents() {
-  const submitBtn = document.getElementById('submit');
+  const submitBtn = elNormal('submit');
   if (submitBtn) {
     submitBtn.addEventListener('click', function () {
       setPrice();
     });
   }
 
-  const compareSubmitBtn = document.getElementById('compare-submit');
+  const compareSubmitBtn = elNormal('compare-submit');
   if (compareSubmitBtn) {
     compareSubmitBtn.addEventListener('click', function () {
       compareActive = true;
@@ -227,7 +239,7 @@ function bindEvents() {
     });
   }
 
-  const selectGroup = document.getElementById('group-select');
+  const selectGroup = elNormal('group-select');
   if (selectGroup) {
     selectGroup.addEventListener('change', function (e) {
       data.group = e.target.value;
@@ -248,7 +260,7 @@ function bindEvents() {
   const dataKeys = ['experience', 'sales', 'product', 'finance', 'internal', 'marketing', 'analytics'];
 
   groupIds.forEach(function (id, i) {
-    const node = document.getElementById(id);
+    const node = elNormal(id);
     const key = dataKeys[i];
     if (node && key) {
       node.addEventListener('change', function (e) {
@@ -259,7 +271,7 @@ function bindEvents() {
     }
   });
 
-  const selectCountry = document.getElementById('group-country');
+  const selectCountry = elNormal('group-country');
   if (selectCountry) {
     selectCountry.addEventListener('change', function (e) {
       data.country = e.target.value;
@@ -268,7 +280,7 @@ function bindEvents() {
     });
   }
 
-  const selectLevel = document.getElementById('select-level');
+  const selectLevel = elNormal('select-level');
   if (selectLevel) {
     selectLevel.addEventListener('change', function (e) {
       data.level = e.target.value;
@@ -277,7 +289,7 @@ function bindEvents() {
     });
   }
 
-  const selectSecondCountry = document.getElementById('second-country');
+  const selectSecondCountry = elNormal('second-country');
   if (selectSecondCountry) {
     selectSecondCountry.addEventListener('change', function (e) {
       var val = (e.target && e.target.value !== undefined) ? e.target.value : (selectSecondCountry.value || '');
@@ -288,13 +300,44 @@ function bindEvents() {
   }
 }
 
+/**
+ * Misma página: oculta calculadora normal y muestra la de 3 países (y al revés).
+ * Webflow: botón #show-compare-calculator; opcional #show-normal-calculator para volver.
+ */
+function bindCalculatorPageToggle() {
+  const btnCompare = document.getElementById('show-compare-calculator');
+  const btnNormal = document.getElementById('show-normal-calculator');
+  const c1 = document.getElementById('container-calculator-1');
+  const c2 = document.getElementById('container-compare-calculator');
+
+  function showCompare(e) {
+    if (e) e.preventDefault();
+    if (c1) c1.style.display = 'none';
+    if (c2) c2.style.display = '';
+  }
+
+  function showNormal(e) {
+    if (e) e.preventDefault();
+    if (c2) c2.style.display = 'none';
+    if (c1) c1.style.display = '';
+  }
+
+  if (btnCompare) btnCompare.addEventListener('click', showCompare);
+  if (btnNormal) btnNormal.addEventListener('click', showNormal);
+
+  // Misma página: al cargar, dejar visible solo la calculadora normal (si existen ambos bloques).
+  if (c1 && c2) c2.style.display = 'none';
+}
+
 // --- Inicialización ---
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', function () {
+    bindCalculatorPageToggle();
     bindEvents();
     onSelect();
   });
 } else {
+  bindCalculatorPageToggle();
   bindEvents();
   onSelect();
 }

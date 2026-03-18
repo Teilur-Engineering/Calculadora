@@ -5,6 +5,9 @@
  */
 var Webflow = Webflow || [];
 
+(function () {
+  'use strict';
+
 // --- Estado del formulario ---
 const data = {
   group: '',
@@ -29,6 +32,15 @@ const COUNTRY_KEY_NORMALIZE = { 'All Latam': 'Mexico' };
 
 // Comparación activa: true cuando el usuario ha pulsado compare-submit
 var compareActive = false;
+
+/** Raíz calculadora 3 países (misma página que la normal; IDs repetidos → buscar solo aquí). */
+const COMPARE_CALC_ROOT_ID = 'container-compare-calculator';
+
+function elCompare(id) {
+  const root = document.getElementById(COMPARE_CALC_ROOT_ID);
+  if (root) return root.querySelector('#' + id);
+  return document.getElementById(id);
+}
 
 // --- Mapeo grupo → ID del contenedor de roles (Webflow) ---
 const GROUP_CONTAINER_IDS = {
@@ -59,44 +71,44 @@ function getCurrentRole() {
 function getDOMElements() {
   return {
     containers: {
-      developmentEngineering: document.getElementById('Development-Engineering'),
-      salesBusinessDev: document.getElementById('Sales-Business-Dev'),
-      financeAccounting: document.getElementById('Finance-Accounting'),
-      productDevDesign: document.getElementById('Product-Dev-Design'),
-      hrInternalOps: document.getElementById('HR-Internal-Ops'),
-      marketingBranding: document.getElementById('Marketing-Branding'),
-      dataAnalytics: document.getElementById('Data-Analytics')
+      developmentEngineering: elCompare('Development-Engineering'),
+      salesBusinessDev: elCompare('Sales-Business-Dev'),
+      financeAccounting: elCompare('Finance-Accounting'),
+      productDevDesign: elCompare('Product-Dev-Design'),
+      hrInternalOps: elCompare('HR-Internal-Ops'),
+      marketingBranding: elCompare('Marketing-Branding'),
+      dataAnalytics: elCompare('Data-Analytics')
     },
-    chooseCountry: document.getElementById('group-country'),
-    chooseTheExperience: document.getElementById('select-level'),
-    or: document.getElementById('or'),
-    secondSection: document.getElementById('second-section'),
-    secondCountry: document.getElementById('second-country'),
-    compareSubmit: document.getElementById('compare-submit'),
-    containerResults: document.getElementById('container-results'),
-    titleCountry1: document.getElementById('title-country-1'),
-    titleCountry2: document.getElementById('title-country-2'),
-    titleCountry3: document.getElementById('title-country-3'),
+    chooseCountry: elCompare('group-country'),
+    chooseTheExperience: elCompare('select-level'),
+    or: elCompare('or'),
+    secondSection: elCompare('second-section'),
+    secondCountry: elCompare('second-country'),
+    compareSubmit: elCompare('compare-submit'),
+    containerResults: elCompare('container-results'),
+    titleCountry1: elCompare('title-country-1'),
+    titleCountry2: elCompare('title-country-2'),
+    titleCountry3: elCompare('title-country-3'),
     table: {
-      candidatesSalary: document.getElementById('Candidates-salary'),
-      teilursFee: document.getElementById('teilurs-fee'),
-      price: document.getElementById('price'),
-      median: document.getElementById('median'),
-      min: document.getElementById('min'),
-      max: document.getElementById('max'),
-      total: document.getElementById('total'),
-      bar: document.getElementById('bar'),
-      candidatesSalary2: document.getElementById('Candidates-salary-2'),
-      teilursFee2: document.getElementById('teilurs-fee-2'),
-      total2: document.getElementById('total-2'),
-      price2: document.getElementById('price-2'),
-      candidatesSalary3: document.getElementById('Candidates-salary-3'),
-      teilursFee3: document.getElementById('teilurs-fee-3'),
-      total3: document.getElementById('total-3'),
-      price3: document.getElementById('price-3'),
-      totalSaving: document.getElementById('total-saving'),
-      totalSaving2: document.getElementById('total-saving-2'),
-      price4: document.getElementById('price-4')
+      candidatesSalary: elCompare('Candidates-salary'),
+      teilursFee: elCompare('teilurs-fee'),
+      price: elCompare('price'),
+      median: elCompare('median'),
+      min: elCompare('min'),
+      max: elCompare('max'),
+      total: elCompare('total'),
+      bar: elCompare('bar'),
+      candidatesSalary2: elCompare('Candidates-salary-2'),
+      teilursFee2: elCompare('teilurs-fee-2'),
+      total2: elCompare('total-2'),
+      price2: elCompare('price-2'),
+      candidatesSalary3: elCompare('Candidates-salary-3'),
+      teilursFee3: elCompare('teilurs-fee-3'),
+      total3: elCompare('total-3'),
+      price3: elCompare('price-3'),
+      totalSaving: elCompare('total-saving'),
+      totalSaving2: elCompare('total-saving-2'),
+      price4: elCompare('price-4')
     }
   };
 }
@@ -126,7 +138,7 @@ function updateUI() {
 
   const activeId = GROUP_CONTAINER_IDS[data.group];
   if (activeId) {
-    const active = document.getElementById(activeId);
+    const active = elCompare(activeId);
     if (active) active.style.display = 'flex';
   }
 
@@ -268,7 +280,7 @@ function onSelect() {
 
 // --- Event listeners ---
 function bindEvents() {
-  const compareSubmitBtn = document.getElementById('compare-submit');
+  const compareSubmitBtn = elCompare('compare-submit');
   if (compareSubmitBtn) {
     compareSubmitBtn.addEventListener('click', function () {
       compareActive = true;
@@ -277,7 +289,7 @@ function bindEvents() {
     });
   }
 
-  const selectGroup = document.getElementById('group-select');
+  const selectGroup = elCompare('group-select');
   if (selectGroup) {
     selectGroup.addEventListener('change', function (e) {
       data.group = e.target.value;
@@ -298,7 +310,7 @@ function bindEvents() {
   const dataKeys = ['experience', 'sales', 'product', 'finance', 'internal', 'marketing', 'analytics'];
 
   groupIds.forEach(function (id, i) {
-    const node = document.getElementById(id);
+    const node = elCompare(id);
     const key = dataKeys[i];
     if (node && key) {
       node.addEventListener('change', function (e) {
@@ -309,7 +321,7 @@ function bindEvents() {
     }
   });
 
-  const selectCountry = document.getElementById('group-country');
+  const selectCountry = elCompare('group-country');
   if (selectCountry) {
     selectCountry.addEventListener('change', function (e) {
       data.country = e.target.value;
@@ -318,7 +330,7 @@ function bindEvents() {
     });
   }
 
-  const selectLevel = document.getElementById('select-level');
+  const selectLevel = elCompare('select-level');
   if (selectLevel) {
     selectLevel.addEventListener('change', function (e) {
       data.level = e.target.value;
@@ -327,7 +339,7 @@ function bindEvents() {
     });
   }
 
-  const selectSecondCountry = document.getElementById('second-country');
+  const selectSecondCountry = elCompare('second-country');
   if (selectSecondCountry) {
     selectSecondCountry.addEventListener('change', function (e) {
       var val = (e.target && e.target.value !== undefined) ? e.target.value : (selectSecondCountry.value || '');
@@ -350,3 +362,5 @@ if (document.readyState === 'loading') {
 }
 
 console.log('Calculadora Teilur 3 países cargada', new Date().toISOString());
+
+})();
