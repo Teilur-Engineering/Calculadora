@@ -49,7 +49,8 @@ const GROUP_CONTAINER_IDS = {
 
 // Valores del select País que coinciden con la clave en PRICE_TABLE (Brazil, Colombia, Mexico, Argentina, Estados Unidos).
 // Si en Webflow el option value es distinto (ej. "México"), añade aquí: 'México': 'Mexico'
-const COUNTRY_KEY_NORMALIZE = {};
+// "All LATAM" usa los precios de Mexico, igual que la calculadora de 3 países (en /pricing la opción ya trae value="Mexico").
+const COUNTRY_KEY_NORMALIZE = { 'All LATAM': 'Mexico', 'All Latam': 'Mexico' };
 
 /** Valor del select sin espacios sobrantes (en Webflow hay opciones como " Laravel Developer" o "CAD Designer "). */
 function selectValue(e) {
