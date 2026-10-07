@@ -51,6 +51,20 @@ const GROUP_CONTAINER_IDS = {
 // Si en Webflow el option value es distinto (ej. "México"), añade aquí: 'México': 'Mexico'
 const COUNTRY_KEY_NORMALIZE = {};
 
+/** Valor del select sin espacios sobrantes (en Webflow hay opciones como " Laravel Developer" o "CAD Designer "). */
+function selectValue(e) {
+  return e && e.target && e.target.value != null ? String(e.target.value).trim() : '';
+}
+
+/** Se muestra cuando un rol no tiene precio en PRICE_TABLE, para no dejar visible el resultado anterior. */
+const NO_PRICE_TEXT = '—';
+
+function clearFields(fields) {
+  fields.forEach(function (node) {
+    if (node) node.textContent = NO_PRICE_TEXT;
+  });
+}
+
 // --- Rol actual según el grupo (campo en data) ---
 function getCurrentRole() {
   const roleByGroup = {
@@ -179,9 +193,12 @@ function setPrice() {
   const key = data.group + '|' + role + '|' + data.level + '|' + country;
   const row = typeof PRICE_TABLE !== 'undefined' && PRICE_TABLE[key];
 
-  if (!row) return;
-
   const t = el.table;
+  if (!row) {
+    clearFields([t.price, t.total, t.median, t.min, t.max, t.candidatesSalary, t.teilursFee]);
+    return;
+  }
+
   t.price.textContent = row.price;
   t.total.textContent = row.total;
   t.median.textContent = row.median;
@@ -205,9 +222,12 @@ function setComparePrice() {
   const key = data.group + '|' + role + '|' + data.level + '|' + country2;
   const row = typeof PRICE_TABLE !== 'undefined' && PRICE_TABLE[key];
 
-  if (!row) return;
-
   const t = el.table;
+  if (!row) {
+    clearFields([t.candidatesSalary2, t.teilursFee2, t.total2, t.price2]);
+    return;
+  }
+
   if (t.candidatesSalary2) t.candidatesSalary2.textContent = row.candidatesSalary;
   if (t.teilursFee2) t.teilursFee2.textContent = row.teilursFee;
   if (t.total2) t.total2.textContent = row.total;
@@ -242,7 +262,7 @@ function bindEvents() {
   const selectGroup = elNormal('group-select');
   if (selectGroup) {
     selectGroup.addEventListener('change', function (e) {
-      data.group = e.target.value;
+      data.group = selectValue(e);
       compareActive = false;
       onSelect();
     });
@@ -264,7 +284,7 @@ function bindEvents() {
     const key = dataKeys[i];
     if (node && key) {
       node.addEventListener('change', function (e) {
-        data[key] = e.target.value;
+        data[key] = selectValue(e);
         compareActive = false;
         onSelect();
       });
@@ -274,7 +294,7 @@ function bindEvents() {
   const selectCountry = elNormal('group-country');
   if (selectCountry) {
     selectCountry.addEventListener('change', function (e) {
-      data.country = e.target.value;
+      data.country = selectValue(e);
       compareActive = false;
       onSelect();
     });
@@ -283,7 +303,7 @@ function bindEvents() {
   const selectLevel = elNormal('select-level');
   if (selectLevel) {
     selectLevel.addEventListener('change', function (e) {
-      data.level = e.target.value;
+      data.level = selectValue(e);
       compareActive = false;
       onSelect();
     });

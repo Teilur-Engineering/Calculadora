@@ -30,6 +30,20 @@ const THIRD_COUNTRY_LABEL = 'United States';
 // All Latam usa precios de Mexico en PRICE_TABLE; en el título se muestra "All Latam" (por el texto del option)
 const COUNTRY_KEY_NORMALIZE = { 'All Latam': 'Mexico' };
 
+/** Valor del select sin espacios sobrantes (en Webflow hay opciones como " Laravel Developer" o "CAD Designer "). */
+function selectValue(e) {
+  return e && e.target && e.target.value != null ? String(e.target.value).trim() : '';
+}
+
+/** Se muestra cuando un rol no tiene precio en PRICE_TABLE, para no dejar visible el resultado anterior. */
+const NO_PRICE_TEXT = '—';
+
+function clearFields(fields) {
+  fields.forEach(function (node) {
+    if (node) node.textContent = NO_PRICE_TEXT;
+  });
+}
+
 // Comparación activa: true cuando el usuario ha pulsado compare-submit
 var compareActive = false;
 
@@ -185,9 +199,12 @@ function setPriceCountry1() {
   const country = COUNTRY_KEY_NORMALIZE[data.country] || data.country;
   const key = data.group + '|' + role + '|' + data.level + '|' + country;
   const row = typeof PRICE_TABLE !== 'undefined' && PRICE_TABLE[key];
-  if (!row) return;
-
   const t = el.table;
+  if (!row) {
+    clearFields([t.price, t.total, t.median, t.min, t.max, t.candidatesSalary, t.teilursFee]);
+    return;
+  }
+
   t.price.textContent = row.price;
   t.total.textContent = row.total;
   t.median.textContent = row.median;
@@ -209,9 +226,12 @@ function setPriceCountry2() {
   const country2 = COUNTRY_KEY_NORMALIZE[data.secondCountry] || data.secondCountry;
   const key = data.group + '|' + role + '|' + data.level + '|' + country2;
   const row = typeof PRICE_TABLE !== 'undefined' && PRICE_TABLE[key];
-  if (!row) return;
-
   const t = el.table;
+  if (!row) {
+    clearFields([t.candidatesSalary2, t.teilursFee2, t.total2, t.price2]);
+    return;
+  }
+
   if (t.candidatesSalary2) t.candidatesSalary2.textContent = row.candidatesSalary;
   if (t.teilursFee2) t.teilursFee2.textContent = row.teilursFee;
   if (t.total2) t.total2.textContent = row.total;
@@ -228,9 +248,12 @@ function setPriceCountry3() {
 
   const key = data.group + '|' + role + '|' + data.level + '|' + THIRD_COUNTRY_KEY;
   const row = typeof PRICE_TABLE !== 'undefined' && PRICE_TABLE[key];
-  if (!row) return;
-
   const t = el.table;
+  if (!row) {
+    clearFields([t.candidatesSalary3, t.teilursFee3, t.total3, t.price3]);
+    return;
+  }
+
   if (t.candidatesSalary3) t.candidatesSalary3.textContent = row.candidatesSalary;
   if (t.teilursFee3) t.teilursFee3.textContent = row.teilursFee;
   if (t.total3) t.total3.textContent = row.total;
@@ -263,7 +286,10 @@ function fillAllThreePrices() {
   const row1 = PRICE_TABLE[key1];
   const row2 = PRICE_TABLE[key2];
   const rowUS = PRICE_TABLE[keyUS];
-  if (!row1 || !row2 || !rowUS) return;
+  if (!row1 || !row2 || !rowUS) {
+    clearFields([t.totalSaving, t.totalSaving2, t.price4]);
+    return;
+  }
 
   const total1 = parsePrice(row1.total);
   const total2 = parsePrice(row2.total);
@@ -292,7 +318,7 @@ function bindEvents() {
   const selectGroup = elCompare('group-select');
   if (selectGroup) {
     selectGroup.addEventListener('change', function (e) {
-      data.group = e.target.value;
+      data.group = selectValue(e);
       compareActive = false;
       onSelect();
     });
@@ -314,7 +340,7 @@ function bindEvents() {
     const key = dataKeys[i];
     if (node && key) {
       node.addEventListener('change', function (e) {
-        data[key] = e.target.value;
+        data[key] = selectValue(e);
         compareActive = false;
         onSelect();
       });
@@ -324,7 +350,7 @@ function bindEvents() {
   const selectCountry = elCompare('group-country');
   if (selectCountry) {
     selectCountry.addEventListener('change', function (e) {
-      data.country = e.target.value;
+      data.country = selectValue(e);
       compareActive = false;
       onSelect();
     });
@@ -333,7 +359,7 @@ function bindEvents() {
   const selectLevel = elCompare('select-level');
   if (selectLevel) {
     selectLevel.addEventListener('change', function (e) {
-      data.level = e.target.value;
+      data.level = selectValue(e);
       compareActive = false;
       onSelect();
     });
