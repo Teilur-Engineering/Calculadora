@@ -77,7 +77,57 @@ function getCurrentRole() {
     'Marketing & Branding': data.marketing,
     'Data & Analytics': data.analytics
   };
-  return roleByGroup[data.group] || '';
+  const role = roleByGroup[data.group] || '';
+  return ROLE_KEY_NORMALIZE[role] || role;
+}
+
+// Roles de las páginas antiguas que en la tabla 2026 tienen otro nombre.
+const ROLE_KEY_NORMALIZE = { 'Cybersecurity': 'Security Engineer' };
+
+// Grupo → campo de `data` donde se guarda el rol elegido.
+const GROUP_ROLE_KEYS = {
+  'Development & Engineering': 'experience',
+  'Sales & Business Dev': 'sales',
+  'Finance & Accounting': 'finance',
+  'Product Dev & Design': 'product',
+  'HR & Internal Ops': 'internal',
+  'Marketing & Branding': 'marketing',
+  'Data & Analytics': 'analytics'
+};
+
+/**
+ * Selecciona en un select (o en el primer select dentro del nodo) la opción cuyo valor
+ * coincide sin distinguir mayúsculas ni espacios. Devuelve el valor recortado o ''.
+ */
+function pickOption(node, wanted) {
+  const select = node && (node.tagName === 'SELECT' ? node : node.querySelector('select'));
+  if (!select || !wanted) return '';
+  const target = String(wanted).trim().toLowerCase();
+  const option = Array.prototype.find.call(select.options, function (o) {
+    return String(o.value).trim().toLowerCase() === target;
+  });
+  if (!option) return '';
+  select.value = option.value;
+  return String(option.value).trim();
+}
+
+/**
+ * Preselección opcional por página, para mostrar un precio al cargar:
+ *   window.TEILUR_CALC_DEFAULTS = { group, role, country, level }
+ * La usan las páginas de /resources (antes lo hacían sus scripts propios).
+ */
+function applyDefaults() {
+  const defaults = window.TEILUR_CALC_DEFAULTS;
+  if (!defaults || !defaults.group) return;
+
+  data.group = pickOption(elNormal('group-select'), defaults.group);
+  const roleKey = GROUP_ROLE_KEYS[data.group];
+  if (roleKey) data[roleKey] = pickOption(elNormal(GROUP_CONTAINER_IDS[data.group]), defaults.role);
+  data.country = pickOption(elNormal('group-country'), defaults.country);
+  data.level = pickOption(elNormal('select-level'), defaults.level);
+
+  updateUI();
+  setPrice();
 }
 
 // --- Referencias DOM (IDs Webflow) ---
@@ -356,11 +406,13 @@ if (document.readyState === 'loading') {
     bindCalculatorPageToggle();
     bindEvents();
     onSelect();
+    applyDefaults();
   });
 } else {
   bindCalculatorPageToggle();
   bindEvents();
   onSelect();
+  applyDefaults();
 }
 
 console.log('Calculadora Teilur cargada (2026)', new Date().toISOString());
